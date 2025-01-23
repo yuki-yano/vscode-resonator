@@ -1,0 +1,64 @@
+{
+  "name": "vscode-resonator",
+  "displayName": "resonator",
+  "description": "",
+  "publisher": "yuki-yano",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuki-yano/vscode-resonator"
+  },
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.93.1"
+  },
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-resonator.connect",
+        "title": "Connect to Resonator"
+      },
+      {
+        "command": "vscode-resonator.disconnect",
+        "title": "Disconnect from Resonator"
+      },
+      {
+        "command": "vscode-resonator.showOutputChannel",
+        "title": "Show Output Channel"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "vscode-test",
+    "package": "vsce package",
+    "package:watch": "nodemon --watch src --ext ts --exec 'npm run package'",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.93.1",
+    "@types/ws": "^8.5.13",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.1",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-perfectionist": "^4.7.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "debounce": "^2.2.0",
+    "ws": "^8.18.0"
+  }
+}
