@@ -4,7 +4,7 @@ Resonator is a extension for syncing open files, cursor position, and more betwe
 
 ## VSCode extension
 
-TODO
+[Resonator](https://marketplace.visualstudio.com/items?itemName=yuki-yano.vscode-resonator)
 
 ## Vim plugin
 
