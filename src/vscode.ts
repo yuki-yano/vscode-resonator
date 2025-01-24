@@ -3,7 +3,7 @@ import * as vscode from "vscode"
 import { debouncedSendCursorPos } from "./sender"
 import { getLastCursorPos, setLastCursorPos } from "./state"
 import { CursorPos } from "./types"
-import { WebSocketHandler } from "./websocket-handler"
+import { WebSocketHandler } from "./ws"
 
 export const getVSCodePosition = (): CursorPos => {
   const editor = vscode.window.activeTextEditor

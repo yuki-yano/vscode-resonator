@@ -8,6 +8,7 @@ export type CursorPosProtocol = {
   col: number
   line: number
   path: string
+  paused: boolean
   sender: "vim" | "vscode"
   type: "CursorPos"
 }
@@ -19,6 +20,7 @@ export type SelectionPosProtocol = {
   endCol: number
   endLine: number
   path: string
+  paused: boolean
   sender: "vim" | "vscode"
   startCol: number
   startLine: number
@@ -29,6 +31,7 @@ export type TextContentProtocol = {
   col: number
   line: number
   path: string
+  paused: boolean
   sender: "vim" | "vscode"
   text: string
   type: "TextContent"

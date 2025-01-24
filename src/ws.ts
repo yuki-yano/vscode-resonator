@@ -3,24 +3,28 @@ import { WebSocket, MessageEvent as WsMessageEvent } from "ws"
 
 import type { CursorPos, MessageProtocol, TextContentProtocol } from "./types"
 
-import { getResonatorDefaultPort } from "./utils"
 import { setVSCodePosition } from "./vscode"
 
 export class WebSocketHandler {
+  public isConnected = false
+  public isPaused = false
+  private connectionStatusListeners: ((isConnected: boolean) => void)[] = []
   private outputChannel: vscode.OutputChannel
+  private pausedListeners: ((paused: boolean) => void)[] = []
   private socket: undefined | WebSocket
 
   constructor(outputChannel: vscode.OutputChannel) {
     this.outputChannel = outputChannel
   }
 
-  public async connect() {
-    const defaultPort = getResonatorDefaultPort()
-    const socketPort = await vscode.window.showInputBox({
-      placeHolder: defaultPort.toString(),
-      prompt: "Enter the port number to connect to",
-      value: defaultPort.toString(),
-    })
+  public async connect({ port, showPortInput = false }: { port: number; showPortInput?: boolean }) {
+    const socketPort = showPortInput
+      ? await vscode.window.showInputBox({
+          placeHolder: port.toString(),
+          prompt: "Enter the port number to connect to",
+          value: port.toString(),
+        })
+      : port.toString()
 
     if (socketPort == null || Number.isNaN(Number(socketPort))) {
       return
@@ -29,8 +33,9 @@ export class WebSocketHandler {
     this.socket = new WebSocket(`ws://localhost:${socketPort}`)
 
     this.socket.addEventListener("message", this.handleMessage.bind(this))
-
     this.socket.on("open", () => {
+      this.isConnected = true
+      this.notifyConnectionStatus(true)
       this.outputChannel.appendLine("Connected to the resonator server")
       vscode.window.showInformationMessage("Connected to the resonator server")
     })
@@ -39,10 +44,14 @@ export class WebSocketHandler {
     })
     this.socket.on("error", (error) => {
       this.outputChannel.appendLine(`Error: ${error}`)
+      this.isConnected = false
+      this.notifyConnectionStatus(false)
     })
     this.socket.on("close", () => {
       this.outputChannel.appendLine("Disconnected from the resonator server")
       vscode.window.showInformationMessage("Disconnected from the resonator server")
+      this.isConnected = false
+      this.notifyConnectionStatus(false)
     })
   }
 
@@ -50,6 +59,16 @@ export class WebSocketHandler {
     this.socket?.close()
     this.socket = undefined
     vscode.window.showInformationMessage("Disconnected from the resonator server")
+    this.isConnected = false
+    this.notifyConnectionStatus(false)
+  }
+
+  public onConnectionStatusChange(listener: (isConnected: boolean) => void) {
+    this.connectionStatusListeners.push(listener)
+  }
+
+  public onPausedChange(listener: (paused: boolean) => void) {
+    this.pausedListeners.push(listener)
   }
 
   public sendMessage(message: MessageProtocol): void {
@@ -64,8 +83,6 @@ export class WebSocketHandler {
   }
 
   private async handleCursorPos(cursorPos: CursorPos, editor: vscode.TextEditor) {
-    this.outputChannel.appendLine(`Handling CursorPos: ${cursorPos.path} ${cursorPos.line} ${cursorPos.col}`)
-
     const document = await vscode.workspace.openTextDocument(cursorPos.path)
     await vscode.window.showTextDocument(document)
 
@@ -75,6 +92,18 @@ export class WebSocketHandler {
   private async handleMessage(event: WsMessageEvent) {
     const message = JSON.parse(event.data as string) as MessageProtocol
     this.outputChannel.appendLine(`Received message: ${message}`)
+
+    if (message.paused !== this.isPaused) {
+      this.isPaused = message.paused
+      this.notifyPaused(this.isPaused)
+    }
+    if (message.paused) {
+      return
+    }
+
+    if (vscode.window.state.focused) {
+      return
+    }
 
     const editor = vscode.window.activeTextEditor
     if (editor == null) {
@@ -117,5 +146,13 @@ export class WebSocketHandler {
       path: message.path,
     }
     setVSCodePosition({ editor, position })
+  }
+
+  private notifyConnectionStatus(isConnected: boolean) {
+    this.connectionStatusListeners.forEach((listener) => listener(isConnected))
+  }
+
+  private notifyPaused(paused: boolean) {
+    this.pausedListeners.forEach((listener) => listener(paused))
   }
 }

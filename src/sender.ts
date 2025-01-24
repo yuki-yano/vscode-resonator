@@ -3,14 +3,10 @@ import * as vscode from "vscode"
 
 import { getLastCursorPos, setLastCursorPos } from "./state"
 import { CursorPos, CursorPosProtocol } from "./types"
-import { WebSocketHandler } from "./websocket-handler"
+import { WebSocketHandler } from "./ws"
 
 export const debouncedSendCursorPos = debounce(
-  (
-    document: vscode.TextDocument,
-    cursorPosition: CursorPos,
-    wsHandler: WebSocketHandler,
-  ) => {
+  (document: vscode.TextDocument, cursorPosition: CursorPos, wsHandler: WebSocketHandler) => {
     const lastCursorPosition = getLastCursorPos()
     if (
       lastCursorPosition &&
@@ -27,6 +23,7 @@ export const debouncedSendCursorPos = debounce(
       col: cursorPosition.col,
       line: cursorPosition.line,
       path: document.uri.fsPath,
+      paused: wsHandler.isPaused,
       sender: "vscode",
       type: "CursorPos",
     }
