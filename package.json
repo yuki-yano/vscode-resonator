@@ -1,14 +1,14 @@
 {
   "name": "vscode-resonator",
-  "displayName": "Resonator",
-  "description": "",
+  "displayName": "Resonator - Auto-sync editing with Vim",
+  "description": "Automatically synchronize editing state, cursor position and file content between VSCode and Vim",
   "publisher": "yuki-yano",
   "repository": {
     "type": "git",
     "url": "https://github.com/yuki-yano/vscode-resonator"
   },
   "icon": "assets/icons/icon.png",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.93.1"
   },
