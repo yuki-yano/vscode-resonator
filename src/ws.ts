@@ -37,7 +37,6 @@ export class WebSocketHandler {
       this.isConnected = true
       this.notifyConnectionStatus(true)
       this.outputChannel.appendLine("Connected to the resonator server")
-      vscode.window.showInformationMessage("Connected to the resonator server")
     })
     this.socket.on("message", (message) => {
       this.outputChannel.appendLine(`Received message: ${message}`)
@@ -49,7 +48,6 @@ export class WebSocketHandler {
     })
     this.socket.on("close", () => {
       this.outputChannel.appendLine("Disconnected from the resonator server")
-      vscode.window.showInformationMessage("Disconnected from the resonator server")
       this.isConnected = false
       this.notifyConnectionStatus(false)
     })
@@ -58,7 +56,6 @@ export class WebSocketHandler {
   public disconnect() {
     this.socket?.close()
     this.socket = undefined
-    vscode.window.showInformationMessage("Disconnected from the resonator server")
     this.isConnected = false
     this.notifyConnectionStatus(false)
   }
