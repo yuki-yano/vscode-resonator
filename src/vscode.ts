@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 
 import { debouncedSendCursorPos } from "./sender"
 import { getLastCursorPos, setLastCursorPos } from "./state"
-import { CursorPos } from "./types"
+import { CursorPos, ExecuteCommandProtocol } from "./types"
 import { WebSocketHandler } from "./ws"
 
 export const getVSCodePosition = (): CursorPos => {
@@ -86,4 +86,24 @@ export const sendCursorPos = ({
     //
     // wsHandler.sendMessage(selectionPos);
   }
+}
+
+export const sendExecuteCommand = ({
+  args,
+  command,
+  wsHandler,
+}: {
+  args: Array<string>
+  command: string
+  wsHandler: WebSocketHandler
+}) => {
+  const executeCommand: ExecuteCommandProtocol = {
+    args,
+    command,
+    paused: wsHandler.isPaused,
+    sender: "vscode",
+    type: "ExecuteCommand",
+  }
+
+  wsHandler.sendMessage(executeCommand)
 }

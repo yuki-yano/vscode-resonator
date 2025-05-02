@@ -8,7 +8,7 @@
     "url": "https://github.com/yuki-yano/vscode-resonator"
   },
   "icon": "assets/icons/icon.png",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.93.1"
   },
@@ -28,7 +28,7 @@
       },
       {
         "command": "vscode-resonator.showOutputChannel",
-        "title": "Show Output Channel"
+        "title": "Show Resonator Output Channel"
       }
     ]
   },

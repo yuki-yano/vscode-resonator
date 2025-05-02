@@ -69,6 +69,8 @@ export class WebSocketHandler {
   }
 
   public sendMessage(message: MessageProtocol): void {
+    this.outputChannel.appendLine(`Sending message: ${message}`)
+
     if (this.socket?.readyState !== WebSocket.OPEN) {
       vscode.window.showErrorMessage(`Not connected, status: ${this.socket?.readyState}`)
       this.socket?.close()

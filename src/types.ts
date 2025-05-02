@@ -13,8 +13,15 @@ export type CursorPosProtocol = {
   type: "CursorPos"
 }
 
+export type ExecuteCommandProtocol = {
+  args: Array<string>
+  command: string
+  paused: boolean
+  sender: "vim" | "vscode"
+  type: "ExecuteCommand"
+}
 
-export type MessageProtocol = CursorPosProtocol | SelectionPosProtocol | TextContentProtocol
+export type MessageProtocol = CursorPosProtocol | ExecuteCommandProtocol | SelectionPosProtocol | TextContentProtocol
 
 export type SelectionPosProtocol = {
   endCol: number

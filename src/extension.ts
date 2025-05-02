@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 
 import { getAutoConnect, setAutoConnect } from "./state"
 import { getResonatorDefaultPort } from "./utils"
-import { sendCursorPos } from "./vscode"
+import { sendCursorPos, sendExecuteCommand } from "./vscode"
 import { WebSocketHandler } from "./ws"
 
 let wsHandler: WebSocketHandler
@@ -52,6 +52,14 @@ export const activate = async (context: vscode.ExtensionContext) => {
 
   vscode.window.onDidChangeTextEditorSelection((event) => {
     sendCursorPos({ event, wsHandler })
+  })
+
+  vscode.workspace.onDidSaveTextDocument(() => {
+    sendExecuteCommand({
+      args: [],
+      command: "checktime",
+      wsHandler,
+    })
   })
 
   vscode.window.onDidChangeActiveTextEditor(async () => {
